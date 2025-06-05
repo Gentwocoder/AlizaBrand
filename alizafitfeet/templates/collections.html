@@ -1,0 +1,358 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All Collections - The Aliza Brand</title>
+    <link rel="stylesheet" href="{% static 'index.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+            z-index: 1000;
+        }
+
+        .modal-content {
+            position: relative;
+            width: 90%;
+            max-width: 800px;
+            margin: 80px auto;
+            height: 80vh;
+        }
+
+        .modal-image-container {
+            position: relative;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #modalImage {
+            max-height: 100%;
+            max-width: 100%;
+            object-fit: contain;
+        }
+
+        .close-modal {
+            position: absolute;
+            right: 10px;
+            top: -30px;
+            color: white;
+            font-size: 30px;
+            cursor: pointer;
+            z-index: 1001;
+        }
+
+        .modal-arrow {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            padding: 15px;
+            cursor: pointer;
+            border-radius: 50%;
+            transition: background-color 0.3s;
+        }
+
+        .modal-arrow:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .modal-arrow.prev {
+            left: 20px;
+        }
+
+        .modal-arrow.next {
+            right: 20px;
+        }
+
+        .modal-dots {
+            position: absolute;
+            bottom: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 10px;
+        }
+
+        .modal-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.5);
+            cursor: pointer;
+        }
+
+        .modal-dot.active {
+            background-color: white;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="logo">
+            <img src="{% static 'images/aliza-logo_2.png' %}" alt="Aliza Fit Feet Logo">
+            <h1>Aliza Fit Feet</h1>
+        </div>
+        <ul class="nav-links">
+            <li><a href="{% url 'index' %}">Home</a></li>
+            <li><a href="{% url 'index' %}#services">Services</a></li>
+            <li><a href="{% url 'index' %}#collection">Collection</a></li>
+            <li><a href="{% url 'index' %}#about">About</a></li>
+            <li><a href="{% url 'index' %}#contact">Contact</a></li>
+        </ul>
+        <div class="mobile-menu">
+            <i class="fas fa-bars"></i>
+        </div>
+    </nav>
+
+    <!-- All Collections Section -->
+    <section class="all-collections">
+        <div class="section-header">
+            <h1>Our Complete Collection</h1>
+            <p>Discover our extensive range of handcrafted footwear</p>
+        </div>
+
+        <!-- Filter Buttons -->
+        <div class="filter-container">
+            <button class="filter-btn active" data-filter="all">
+                All ({{ footwear|length }})
+            </button>
+            <button class="filter-btn" data-filter="shoes">
+                Shoes ({{ category_counts.shoes }})
+            </button>
+            <button class="filter-btn" data-filter="slides">
+                Slides ({{ category_counts.slides }})
+            </button>
+            <button class="filter-btn" data-filter="sandals">
+                Sandals ({{ category_counts.sandals }})
+            </button>
+        </div>
+        
+        <div class="collections-grid">
+            {% for item in footwear %}
+            <div class="collection-item" data-category="{{ item.category }}">
+                <div class="image-slider">
+                    <img src="{{ item.front_image.url }}" alt="{{ item.name }} Front View" class="active">
+                    <img src="{{ item.side_image.url }}" alt="{{ item.name }} Side View">
+                    <button class="slider-arrow prev"><i class="fas fa-chevron-left"></i></button>
+                    <button class="slider-arrow next"><i class="fas fa-chevron-right"></i></button>
+                    <div class="slider-dots">
+                        <span class="dot active"></span>
+                        <span class="dot"></span>
+                    </div>
+                </div>
+                <h3>{{ item.name }}</h3>
+                <p>{{ item.description }}</p>
+                <span class="price">₦{{ item.price|floatformat:2 }}</span>
+                <a href="#" class="product-button">View Details</a>
+            </div>
+            {% empty %}
+            <div class="no-items-message">
+                <p>No footwear items available at the moment.</p>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>Aliza Fit Feet</h3>
+                <p>Crafting perfect fits since 2003</p>
+            </div>
+            <div class="footer-section">
+                <h3>Quick Links</h3>
+                <ul>
+                    <li><a href="{% url 'index' %}">Home</a></li>
+                    <li><a href="{% url 'index' %}#services">Services</a></li>
+                    <li><a href="{% url 'index' %}#collection">Collection</a></li>
+                    <li><a href="{% url 'index' %}#about">About</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Follow Us</h3>
+                <div class="social-links">
+                    <a href="https://www.facebook.com/profile.php?id=61559525400177" target="_blank"><i class="fab fa-facebook"></i></a>
+                    <a href="https://www.instagram.com/thealizabrand/" target="_blank"><i class="fab fa-instagram"></i></a>
+                    <a href="https://wa.me/+2349035717806" target="_blank"><i class="fab fa-whatsapp"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2024 Aliza Fit Feet. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Image Preview Modal -->
+    <div class="modal" id="imageModal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <div class="modal-image-container">
+                <button class="modal-arrow prev"><i class="fas fa-chevron-left"></i></button>
+                <img id="modalImage" src="" alt="Large Preview">
+                <button class="modal-arrow next"><i class="fas fa-chevron-right"></i></button>
+            </div>
+            <div class="modal-dots"></div>
+        </div>
+    </div>
+
+    <!-- JavaScript for filtering and image slider -->
+    <script>
+        // Filter functionality
+        const filterBtns = document.querySelectorAll('.filter-btn');
+        const collectionItems = document.querySelectorAll('.collection-item');
+
+        filterBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                // Remove active class from all buttons
+                filterBtns.forEach(btn => btn.classList.remove('active'));
+                // Add active class to clicked button
+                btn.classList.add('active');
+
+                const filterValue = btn.getAttribute('data-filter');
+
+                collectionItems.forEach(item => {
+                    if (filterValue === 'all' || item.getAttribute('data-category') === filterValue) {
+                        item.style.display = 'block';
+                    } else {
+                        item.style.display = 'none';
+                    }
+                });
+            });
+        });
+
+        // Updated Image slider functionality
+        const imageSliders = document.querySelectorAll('.image-slider');
+
+        imageSliders.forEach(slider => {
+            const images = slider.querySelectorAll('img');
+            const prevBtn = slider.querySelector('.prev');
+            const nextBtn = slider.querySelector('.next');
+            const dots = slider.querySelectorAll('.dot');
+            let currentImageIndex = 0;
+
+            function updateSlider() {
+                images.forEach((img, index) => {
+                    img.classList.remove('active');
+                    dots[index].classList.remove('active');
+                });
+                images[currentImageIndex].classList.add('active');
+                dots[currentImageIndex].classList.add('active');
+            }
+
+            prevBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                currentImageIndex = (currentImageIndex - 1 + images.length) % images.length;
+                updateSlider();
+            });
+
+            nextBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                currentImageIndex = (currentImageIndex + 1) % images.length;
+                updateSlider();
+            });
+
+            dots.forEach((dot, index) => {
+                dot.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    currentImageIndex = index;
+                    updateSlider();
+                });
+            });
+        });
+
+        // Modal functionality
+        const modal = document.getElementById('imageModal');
+        const modalImage = document.getElementById('modalImage');
+        const modalClose = document.querySelector('.close-modal');
+        const modalPrev = document.querySelector('.modal-arrow.prev');
+        const modalNext = document.querySelector('.modal-arrow.next');
+        const modalDots = document.querySelector('.modal-dots');
+        let currentModalImages = [];
+        let currentModalIndex = 0;
+
+        // Add click event to all collection item images
+        document.querySelectorAll('.image-slider').forEach(slider => {
+            const images = Array.from(slider.querySelectorAll('img'));
+            
+            images.forEach((img, index) => {
+                img.addEventListener('click', () => {
+                    currentModalImages = images.map(img => img.src);
+                    currentModalIndex = index;
+                    openModal(img.src);
+                    updateModalDots();
+                });
+            });
+        });
+
+        function openModal(imageSrc) {
+            modal.style.display = 'block';
+            modalImage.src = imageSrc;
+            updateModalDots();
+        }
+
+        function updateModalDots() {
+            modalDots.innerHTML = '';
+            currentModalImages.forEach((_, index) => {
+                const dot = document.createElement('span');
+                dot.className = `modal-dot ${index === currentModalIndex ? 'active' : ''}`;
+                dot.addEventListener('click', () => {
+                    currentModalIndex = index;
+                    modalImage.src = currentModalImages[currentModalIndex];
+                    updateModalDots();
+                });
+                modalDots.appendChild(dot);
+            });
+        }
+
+        modalClose.addEventListener('click', () => {
+            modal.style.display = 'none';
+        });
+
+        window.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                modal.style.display = 'none';
+            }
+        });
+
+        modalPrev.addEventListener('click', () => {
+            currentModalIndex = (currentModalIndex - 1 + currentModalImages.length) % currentModalImages.length;
+            modalImage.src = currentModalImages[currentModalIndex];
+            updateModalDots();
+        });
+
+        modalNext.addEventListener('click', () => {
+            currentModalIndex = (currentModalIndex + 1) % currentModalImages.length;
+            modalImage.src = currentModalImages[currentModalIndex];
+            updateModalDots();
+        });
+
+        // Add keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (modal.style.display === 'block') {
+                if (e.key === 'ArrowLeft') {
+                    modalPrev.click();
+                } else if (e.key === 'ArrowRight') {
+                    modalNext.click();
+                } else if (e.key === 'Escape') {
+                    modal.style.display = 'none';
+                }
+            }
+        });
+    </script>
+</body>
+</html> 
