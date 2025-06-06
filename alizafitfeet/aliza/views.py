@@ -5,7 +5,9 @@ from django.template.loader import render_to_string
 from django.conf import settings
 from .models import Footwear, Contact
 
-# Create your views here.
+
+
+
 def home(request):
     # Get just 3 latest footwear items for the home page
     latest_footwear = Footwear.objects.filter(is_available=True)[:3]
