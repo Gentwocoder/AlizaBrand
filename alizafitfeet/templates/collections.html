@@ -97,6 +97,80 @@
         .modal-dot.active {
             background-color: white;
         }
+
+        /* Breadcrumbs Styles */
+        .breadcrumbs {
+            padding: 1rem 5%;
+            background-color: #f8f9fa;
+            margin-top: 80px;
+        }
+
+        .breadcrumbs ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .breadcrumbs li {
+            display: flex;
+            align-items: center;
+        }
+
+        .breadcrumbs li:not(:last-child)::after {
+            content: "›";
+            margin: 0 0.5rem;
+            color: #6c757d;
+        }
+
+        .breadcrumbs a {
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+
+        .breadcrumbs a:hover {
+            text-decoration: underline;
+        }
+
+        .breadcrumbs .current {
+            color: #6c757d;
+        }
+
+        /* Pagination Styles */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 2rem 0;
+            gap: 0.5rem;
+        }
+
+        .pagination a, .pagination .current {
+            padding: 0.5rem 1rem;
+            border: 1px solid var(--primary-color);
+            color: var(--primary-color);
+            text-decoration: none;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+        }
+
+        .pagination .current {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .pagination a:hover {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .pagination .disabled {
+            border-color: #ccc;
+            color: #ccc;
+            pointer-events: none;
+        }
     </style>
 </head>
 <body>
@@ -118,6 +192,25 @@
         </div>
     </nav>
 
+    <!-- Breadcrumbs -->
+    <div class="breadcrumbs">
+        <ul>
+            <li><a href="{% url 'index' %}">Home</a></li>
+            <li>
+                {% if current_category == 'all' %}
+                    <span class="current">All Collections</span>
+                {% else %}
+                    <a href="{% url 'collections' %}">All Collections</a>
+                {% endif %}
+            </li>
+            {% if current_category != 'all' %}
+                <li>
+                    <span class="current">{{ current_category|title }}</span>
+                </li>
+            {% endif %}
+        </ul>
+    </div>
+
     <!-- All Collections Section -->
     <section class="all-collections">
         <div class="section-header">
@@ -127,18 +220,18 @@
 
         <!-- Filter Buttons -->
         <div class="filter-container">
-            <button class="filter-btn active" data-filter="all">
-                All ({{ footwear|length }})
-            </button>
-            <button class="filter-btn" data-filter="shoes">
+            <a href="?category=all" class="filter-btn {% if current_category == 'all' %}active{% endif %}">
+                All ({{ category_counts.shoes|add:category_counts.slides|add:category_counts.sandals }})
+            </a>
+            <a href="?category=shoes" class="filter-btn {% if current_category == 'shoes' %}active{% endif %}">
                 Shoes ({{ category_counts.shoes }})
-            </button>
-            <button class="filter-btn" data-filter="slides">
+            </a>
+            <a href="?category=slides" class="filter-btn {% if current_category == 'slides' %}active{% endif %}">
                 Slides ({{ category_counts.slides }})
-            </button>
-            <button class="filter-btn" data-filter="sandals">
+            </a>
+            <a href="?category=sandals" class="filter-btn {% if current_category == 'sandals' %}active{% endif %}">
                 Sandals ({{ category_counts.sandals }})
-            </button>
+            </a>
         </div>
         
         <div class="collections-grid">
@@ -165,6 +258,35 @@
             </div>
             {% endfor %}
         </div>
+
+        <!-- Pagination -->
+        {% if page_obj.paginator.num_pages > 1 %}
+        <div class="pagination">
+            {% if page_obj.has_previous %}
+                <a href="?page=1{% if current_category != 'all' %}&category={{ current_category }}{% endif %}">&laquo; First</a>
+                <a href="?page={{ page_obj.previous_page_number }}{% if current_category != 'all' %}&category={{ current_category }}{% endif %}">Previous</a>
+            {% else %}
+                <span class="disabled">&laquo; First</span>
+                <span class="disabled">Previous</span>
+            {% endif %}
+
+            {% for num in page_obj.paginator.page_range %}
+                {% if page_obj.number == num %}
+                    <span class="current">{{ num }}</span>
+                {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                    <a href="?page={{ num }}{% if current_category != 'all' %}&category={{ current_category }}{% endif %}">{{ num }}</a>
+                {% endif %}
+            {% endfor %}
+
+            {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}{% if current_category != 'all' %}&category={{ current_category }}{% endif %}">Next</a>
+                <a href="?page={{ page_obj.paginator.num_pages }}{% if current_category != 'all' %}&category={{ current_category }}{% endif %}">Last &raquo;</a>
+            {% else %}
+                <span class="disabled">Next</span>
+                <span class="disabled">Last &raquo;</span>
+            {% endif %}
+        </div>
+        {% endif %}
     </section>
 
     <!-- Footer -->

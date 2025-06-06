@@ -4,6 +4,7 @@ from django.core.mail import send_mail
 from django.template.loader import render_to_string
 from django.conf import settings
 from .models import Footwear, Contact
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 
 
@@ -14,19 +15,38 @@ def home(request):
     return render(request, 'index.html', {'footwear': latest_footwear})
 
 def collections(request):
+    category = request.GET.get('category', 'all')
+    page = request.GET.get('page', 1)
+    
     # Get all available footwear
-    all_footwear = Footwear.objects.filter(is_available=True)
+    footwear_list = Footwear.objects.filter(is_available=True)
+    
+    # Apply category filter if not 'all'
+    if category != 'all':
+        footwear_list = footwear_list.filter(category=category)
     
     # Count items in each category
     category_counts = {
-        'shoes': all_footwear.filter(category='shoes').count(),
-        'slides': all_footwear.filter(category='slides').count(),
-        'sandals': all_footwear.filter(category='sandals').count(),
+        'shoes': Footwear.objects.filter(is_available=True, category='shoes').count(),
+        'slides': Footwear.objects.filter(is_available=True, category='slides').count(),
+        'sandals': Footwear.objects.filter(is_available=True, category='sandals').count(),
     }
     
+    # Set up pagination
+    paginator = Paginator(footwear_list, 10)  # Show 10 items per page
+    
+    try:
+        footwear = paginator.page(page)
+    except PageNotAnInteger:
+        footwear = paginator.page(1)
+    except EmptyPage:
+        footwear = paginator.page(paginator.num_pages)
+    
     context = {
-        'footwear': all_footwear,
-        'category_counts': category_counts
+        'footwear': footwear,
+        'category_counts': category_counts,
+        'current_category': category,
+        'page_obj': footwear,  # For pagination template
     }
     return render(request, 'collections.html', context)
 
