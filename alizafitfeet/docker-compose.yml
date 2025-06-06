@@ -1,0 +1,51 @@
+version: '3.8'
+
+services:
+  web:
+    build: .
+    volumes:
+      - .:/app
+      - static_volume:/app/alizafitfeet/staticfiles
+      - media_volume:/app/alizafitfeet/media
+    env_file:
+      - .env
+    depends_on:
+      - db  # Only if you're using the local DB
+    restart: unless-stopped
+    networks:
+      - aliza_network
+
+  db:
+    image: postgres:13
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    environment:
+      - POSTGRES_DB=${DB_NAME}
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+    restart: unless-stopped
+    networks:
+      - aliza_network
+
+  nginx:
+    image: nginx:1.21-alpine
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - static_volume:/app/alizafitfeet/staticfiles
+      - media_volume:/app/alizafitfeet/media
+    ports:
+      - "80:80"
+    depends_on:
+      - web
+    restart: unless-stopped
+    networks:
+      - aliza_network
+
+volumes:
+  postgres_data:
+  static_volume:
+  media_volume:
+
+networks:
+  aliza_network:
+    driver: bridge
