@@ -14,11 +14,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY =config("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-# DEBUG = config('DEBUG')
-DEBUG = True
+DEBUG = config('DEBUG')
 
-# ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS').split(' ')
-ALLOWED_HOSTS = ['*']
+
+ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS').split(' ')
 
 
 # Application definition
