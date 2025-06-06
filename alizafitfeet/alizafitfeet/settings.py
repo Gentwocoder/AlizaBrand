@@ -19,7 +19,7 @@ SECRET_KEY = os.environ.get('SECRET_KEY')
 DEBUG = os.environ.get('DEBUG')
 
 
-ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'localhost, alizabrand.onrender.com').split(',')
+ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'localhost, thealizabrand.onrender.com').split(',')
 
 
 # Application definition
