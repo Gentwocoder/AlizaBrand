@@ -2,6 +2,7 @@ import os
 # import dj_database_url
 from decouple import config
 from pathlib import Path
+import cloudinary_storage
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -33,6 +34,8 @@ INSTALLED_APPS = [
     'django.contrib.humanize',
     'aliza',
     'whitenoise',
+    'cloudinary',
+    'cloudinary_storage',
 
 ]
 
@@ -132,6 +135,14 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': 'dhp68x3uv',
+    'API_KEY': '948364236952688',
+    'API_SECRET': 'lnSMvHxXARBQRShP13Gz7Kzyszs'
+}
+
+DEFAULT_FILE_STORAGE = 'cloudunary_storage.storage.MediaCloudinaryStorage'
 
 # Email settings
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
