@@ -146,9 +146,9 @@ CLOUDINARY_STORAGE = {
 
 # Configure Cloudinary
 cloudinary.config(
-    cloud_name=config('CLOUDINARY_CLOUD_NAME', default='dhp68x3uv'),
-    api_key=config("API_KEY"),
-    api_secret=config("API_SECRET"),
+    cloud_name=os.environ.get('CLOUDINARY_CLOUD_NAME', default='dhp68x3uv'),
+    api_key=os.environ.get("API_KEY"),
+    api_secret=os.environ.get("API_SECRET"),
     secure=True
 )
 
