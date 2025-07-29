@@ -2,6 +2,7 @@ import os
 # import dj_database_url
 from decouple import config
 from pathlib import Path
+import cloudinary
 import cloudinary_storage
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -142,6 +143,14 @@ CLOUDINARY_STORAGE = {
     'API_KEY': os.environ.get("API_KEY"),
     'API_SECRET': os.environ.get("API_SECRET")
 }
+
+# Configure Cloudinary
+cloudinary.config(
+    cloud_name=config('CLOUDINARY_CLOUD_NAME', default='dhp68x3uv'),
+    api_key=config("API_KEY"),
+    api_secret=config("API_SECRET"),
+    secure=True
+)
 
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
